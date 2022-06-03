@@ -33,7 +33,7 @@ spec:
             mountPath: /config-haproxy
           - name: config-ssh
             mountPath: /config-ssh
-      nodeName: {{ deployServer }}
+      nodeName: {{ .Values.deployServer }}
       volumes:
         - name: config-haproxy
           configMap:
