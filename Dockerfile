@@ -3,7 +3,7 @@ FROM debian:11
 RUN export DEBIAN_FRONTEND=noninteractive && \
     apt-get update && \
     apt-get -y upgrade && \
-    apt-get -y install curl gpg wget && \
+    apt-get -y install passwd lsb-release apt-transport-https ca-certificates wget curl gpg && \
     ###
     # Add repo config for HaProxy
     curl https://haproxy.debian.net/bernat.debian.org.gpg | gpg --dearmor > /usr/share/keyrings/haproxy.debian.net.gpg && \
@@ -15,10 +15,10 @@ RUN export DEBIAN_FRONTEND=noninteractive && \
     ###
     # General package installs
     apt-get update && \
-    apt-get --no-install-recommends -y install vim net-tools lsof nmap openssl tzdata ca-certificates rsync apt-transport-https ca-certificates haproxy=2.4.\* && \
+    apt-get --no-install-recommends -y install vim net-tools lsof nmap openssl tzdata rsync haproxy=2.4.\* && \
     ###
     # PHP package installs w/ apache
-    apt -y install php7.4 apache2 php-pear pkg-config libbson-1.0 libmongoc-1.0-0 php-xml php7.0-xml php-dev php7.4-xml && \
+    apt -y install php7.4 apache2 php-pear pkg-config libmongoc-1.0-0 php-xml php7.0-xml php-dev php7.4-xml && \
     apt -y install php7.4-bcmath php7.4-bz2 php7.4-cgi php7.4-common php7.4-curl php7.4-gd php7.4-geoip php7.4-gmp php7.4-imagick php7.4-intl php7.4-json php7.4-mbstring php7.4-mcrypt php7.4-memcache php7.4-memcached php7.4-mongodb php7.4-mysql php7.4-opcache php7.4-pspell php7.4-readline php7.4-snmp php7.4-tidy php7.4-xmlrpc php7.4-xsl php7.4-zip php-pear && \
     ###
     /bin/rm -f /etc/localtime && \
@@ -59,7 +59,6 @@ RUN chmod 644 /etc/php/7.4/apache2/php.ini && \
     ln -f -s /etc/apache2/mods-available/rewrite.load /etc/apache2/mods-enabled/ && \
     ln -f -s /etc/apache2/mods-available/status.conf /etc/apache2/mods-enabled/ && \
     ln -f -s /etc/apache2/mods-available/status.load /etc/apache2/mods-enabled/ && \
-    chmod -v +x /run-httpd.sh && \
     chmod 755 /opt/startServices.sh && \
     chmod -R 755 /var/www/html/* && \
     chmod 644 /root/.bash_profile && \
