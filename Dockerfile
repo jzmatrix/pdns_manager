@@ -1,4 +1,4 @@
-FROM debian:11
+FROM debian:10
 ################################################################################
 RUN export DEBIAN_FRONTEND=noninteractive && \
     apt-get update && \
