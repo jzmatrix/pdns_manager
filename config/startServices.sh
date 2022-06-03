@@ -24,8 +24,11 @@ chmod 600 /root/.ssh/id_rsa
 # Perform initial SSL pull, and start HaProxy (if pull succeeds)
 # /opt/sslUpdate/sslUpdate
 
-# Start the configuration/configMap monitor
+# Start the configuration/configMap monitor for HaProxy
 /usr/bin/screen -dmS ConfigMonitor /opt/monitorConfig
+
+# Start apache
+apache2ctl start
 
 # Start SSHd daemon holder (Not used to SSH in to container, but to hold PID 1 when haproxy reloads)
 /usr/sbin/sshd -D
