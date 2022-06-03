@@ -1,13 +1,14 @@
-FROM debian:11
+FROM debian:10
 ################################################################################
 RUN export DEBIAN_FRONTEND=noninteractive && \
     apt-get update && \
     apt-get -y upgrade && \
-    apt-get -y install passwd lsb-release apt-transport-https ca-certificates wget curl gpg libcrypt1 && \
+    apt-get -y install passwd lsb-release apt-transport-https ca-certificates wget curl gpg && \
     ###
     # Add repo config for HaProxy
     curl https://haproxy.debian.net/bernat.debian.org.gpg | gpg --dearmor > /usr/share/keyrings/haproxy.debian.net.gpg && \
-    echo deb "[signed-by=/usr/share/keyrings/haproxy.debian.net.gpg]" http://haproxy.debian.net bullseye-backports-2.4 main > /etc/apt/sources.list.d/haproxy.list && \
+    # echo deb "[signed-by=/usr/share/keyrings/haproxy.debian.net.gpg]" http://haproxy.debian.net bullseye-backports-2.4 main > /etc/apt/sources.list.d/haproxy.list && \
+    echo deb "[signed-by=/usr/share/keyrings/haproxy.debian.net.gpg]" http://haproxy.debian.net buster-backports-2.2 main > /etc/apt/sources.list.d/haproxy.list && \
     ###
     # Add repo config for PHP
     wget -O /etc/apt/trusted.gpg.d/php.gpg https://packages.sury.org/php/apt.gpg && \
@@ -15,7 +16,7 @@ RUN export DEBIAN_FRONTEND=noninteractive && \
     ###
     # General package installs
     apt-get update && \
-    apt-get --no-install-recommends -y install vim net-tools lsof nmap openssl tzdata rsync haproxy=2.4.\* && \
+    apt-get --no-install-recommends -y install vim net-tools lsof nmap openssl tzdata rsync haproxy=2.2.\* && \
     ###
     # PHP package installs w/ apache
     apt-get -y install php7.4 apache2 && \
