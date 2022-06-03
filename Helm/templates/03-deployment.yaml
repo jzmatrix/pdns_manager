@@ -1,0 +1,54 @@
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  namespace: {{ .Values.namespace }}
+  name: {{ .Values.serviceName }}
+spec:
+  serviceName: "{{ .Values.serviceName }}"
+  replicas: 1
+  selector:
+    matchLabels:
+      app: {{ .Values.serviceName }}
+  template:
+    metadata:
+      labels:
+        app: {{ .Values.serviceName }}
+    spec:
+      containers:
+      - image: "{{ .Values.image.repository }}/{{ .Values.image.name }}:{{ .Values.image.tag | default .Chart.AppVersion }}"
+        imagePullPolicy: {{ .Values.image.pullPolicy }}
+        name: {{ .Values.serviceName }}
+        ports:
+        - containerPort: 80
+          hostPort: 80
+          protocol: TCP
+        - containerPort: 443
+          hostPort: 443
+          protocol: TCP
+        - containerPort: 8080
+          hostPort: 8080
+          protocol: TCP
+        volumeMounts:
+          - name: config-haproxy
+            mountPath: /config-haproxy
+          - name: config-ssh
+            mountPath: /config-ssh
+      nodeName: {{ deployServer }}
+      volumes:
+        - name: config-haproxy
+          configMap:
+            name: config-haproxy
+            items:
+            - key: haproxy.cfg
+              path: haproxy.cfg
+        - name: config-ssh
+          configMap:
+            name: config-ssh
+            items:
+            - key: authorized_keys
+              path: authorized_keys
+            - key: ssh.public
+              path: ssh.public
+            - key: ssh.private
+              path: ssh.private
+

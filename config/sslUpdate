@@ -1,0 +1,64 @@
+#!/usr/bin/perl
+################################################################################
+my $rsync = `which rsync`; chomp $rsync;
+my $md5sum = `which md5sum`; chomp $md5sum;
+my $cp = `which cp`; chomp $cp;
+my $md5Cache;
+my $needRestart = 0;
+################################################################################
+`mkdir -p /STORAGE/PEM`;
+################################################################################
+my $hostname = `hostname`; chomp $hostname;
+################################################################################
+opendir (DIR, "/STORAGE/PEM");
+my @pemList = readdir(DIR);
+closedir (DIR);
+foreach (@pemList)
+{
+	my $pemFile = $_;
+	if (substr($pemFile,0,1) ne ".")
+	{
+		my $md5RAW = `$md5sum /STORAGE/PEM/$pemFile`; chomp $md5Raw;
+		my ($pemMD5, $jnk) = split(' ', $md5RAW);
+		# print "PEM :: $pemFile :: $pemMD5\n";
+		$md5Cache->{$pemFile} = $pemMD5;
+	}
+}
+################################################################################
+# print "-------------------------------------\n";
+################################################################################
+mkdir "/tmp/PEM";
+`$rsync pempull\@pdns.ziemba.net:/STORAGE/PEM/*.pem /tmp/PEM`;
+opendir (DIR, "/tmp/PEM");
+my @newList = readdir(DIR);
+closedir (DIR);
+foreach (@newList)
+{
+	my $pemFile = $_;
+	if (substr($pemFile,0,1) ne ".")
+	{
+		my $md5RAW = `$md5sum /tmp/PEM/$pemFile`; chomp $md5Raw;
+		my ($pemMD5, $jnk) = split(' ', $md5RAW);
+		my $chkMD5 = $md5Cache->{$pemFile};
+		if ($pemMD5 ne $chkMD5)
+		{
+			$needRestart ++;
+			my $cpCMD = "$cp /tmp/PEM/$pemFile /STORAGE/PEM/$pemFile";
+			`$cpCMD`;
+			print "Updating :: $pemFile\n";
+		}
+	}
+}
+################################################################################
+if (($needRestart))
+{
+	print "**** Need to restart HaProxy ****\n";
+	my $curPid = `/bin/pidof haproxy`; chomp $curPid;
+	if ($curPid)
+	{
+		print "Killing HaProxy on $curPid\n";
+		`/bin/kill -9 $curPid`;
+	}
+	print "Launching HaProxy\n";
+	`/usr/sbin/haproxy -f /etc/haproxy/haproxy.cfg -D`
+}

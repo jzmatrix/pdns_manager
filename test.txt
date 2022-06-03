@@ -1,0 +1,5 @@
+https://www.powerdns.com/
+https://pdnsmanager.org/
+https://www.admin-magazine.com/Articles/Speed-up-Your-Name-Server-with-a-MySQL-Back-End
+https://github.com/poweradmin/poweradmin/wiki
+https://github.com/operasoftware/dns-ui

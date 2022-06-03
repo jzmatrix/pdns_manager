@@ -1,0 +1,56 @@
+version: 2.1
+
+workflows:
+  build:
+    jobs:
+      - build:
+          context:
+            - zDNS
+            - DockerLogin
+
+jobs:
+  build:
+    working_directory: /app
+    docker:
+      - image: docker:18.06.3-ce-git
+    steps:
+      - checkout
+      - setup_remote_docker
+      - run:
+          name: Prepare Environment
+          command: |
+            apk add curl
+            ## 
+            curl -LO https://get.helm.sh/helm-v3.8.2-linux-amd64.tar.gz
+            tar -zxvf helm-v3.8.2-linux-amd64.tar.gz
+            mv linux-amd64/helm /usr/local/bin/helm
+            chmod +x /usr/local/bin/helm
+            ##
+            curl -LO https://storage.googleapis.com/kubernetes-release/release/$(curl -s https://storage.googleapis.com/kubernetes-release/release/stable.txt)/bin/linux/amd64/kubectl
+            chmod +x ./kubectl
+            mv ./kubectl /usr/local/bin
+            date +%Y%m%d_%H%M > /tmp/timestamp
+            echo $kubeconfig > /tmp/kubeconfig64
+            echo "B64:"
+            which base64
+            ####
+            mkdir ~/.kube
+            ####
+            base64  -d /tmp/kubeconfig64 > ~/.kube/config
+            chmod 400 ~/.kube/config
+      - run:
+          name: Authenticate with Docker
+          command: |
+            docker login --username ${DOCKER_USERNAME} -p "${DOCKER_PASSWORD}"
+      - run:
+          name: Build application Docker image
+          command: |
+            TS=`cat /tmp/timestamp`
+            echo $TS
+            ##
+            docker build --cache-from=app  -t ${IMAGE_REPO}/${IMAGE_NAME}:$TS -t ${IMAGE_REPO}/${IMAGE_NAME}:latest .
+            ##
+            docker push ${IMAGE_REPO}/${IMAGE_NAME}:$TS
+            docker push ${IMAGE_REPO}/${IMAGE_NAME}:latest
+            ##
+            helm upgrade ${SERVICE_NAME} Helm/ --set serviceName="${SERVICE_NAME}",namespace="${SERVICE_NAMESPACE}",image.repository="${IMAGE_REPO}",image.name="${IMAGE_NAME}",image.tag=$TS

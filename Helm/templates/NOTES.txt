@@ -1,0 +1,4 @@
+Minecraft -DockerProxy has been deployed
+- Namespace: {{ .Release.Namespace }}
+- Application: {{ include "zhdockerproxy.fullname" . }}
+- Image: {{ .Values.image.repository }}:{{ .Values.image.tag | default .Chart.AppVersion }}

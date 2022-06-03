@@ -1,0 +1,40 @@
+#!/usr/bin/perl
+################################################################################
+my $md5sum = `which md5sum`; chomp $md5sum;
+################################################################################
+while (1)
+{
+    # print "Checking Config Changes....\n";
+    #####
+    $configMD5 = &getMD5("/config-haproxy/haproxy.cfg");
+    $currentMD5 = &getMD5("/etc/haproxy/haproxy.cfg");
+    #####
+    print "Config :: $configMD5\n";
+    print "Current :: $currentMD5\n";
+    #####
+    if ($configMD5 ne $currentMD5)
+    {
+        `cp /config-haproxy/haproxy.cfg /etc/haproxy/haproxy.cfg`;
+        ###
+        print "**** Need to restart HaProxy ****\n";
+        my $curPid = `/bin/pidof haproxy`; chomp $curPid;
+        if ($curPid)
+        {
+            print "Killing HaProxy on $curPid\n";
+            `/bin/kill -9 $curPid`;
+        }
+        print "Launching HaProxy\n";
+        `/usr/sbin/haproxy -f /etc/haproxy/haproxy.cfg -D`
+    }
+    #####
+    sleep (60);
+}
+################################################################################
+################################################################################
+sub getMD5
+{
+    my ($file) = @_;
+    my $md5RAW = `$md5sum $file`; chomp $md5RAW;
+    my ($chkSum, $fName) = split(' ', $md5RAW);
+    return $chkSum;
+}
