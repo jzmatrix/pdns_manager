@@ -18,7 +18,8 @@ RUN export DEBIAN_FRONTEND=noninteractive && \
     mkdir /opt/sslUpdate && \
     mkdir /var/run/sshd && \
     mkdir -p /STORAGE/PEM/ && \
-    chmod 0755 /var/run/sshd
+    chmod 0755 /var/run/sshd && \
+    mkdir /run/haproxy
 ################################################################################
 ADD config/startServices.sh /opt/startServices.sh
 ADD config/bash_profile /root/.bash_profile
