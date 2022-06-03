@@ -12,6 +12,7 @@ apt-get -y install screen openssh-client openssh-server
 
 # Copy config files
 cp /config-haproxy/haproxy.cfg /etc/haproxy/haproxy.cfg
+echo "" >> /etc/haproxy/haproxy.cfg
 cp /config-ssh/authorized_keys /root/.ssh/authorized_keys
 cp /config-ssh/ssh.public /root/.ssh/id_rsa.pub
 cp /config-ssh/ssh.private /root/.ssh/id_rsa

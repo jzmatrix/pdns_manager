@@ -15,6 +15,7 @@ while (1)
     if ($configMD5 ne $currentMD5)
     {
         `cp /config-haproxy/haproxy.cfg /etc/haproxy/haproxy.cfg`;
+        `echo "" >> /etc/haproxy/haproxy.cfg`;
         ###
         print "**** Need to restart HaProxy ****\n";
         my $curPid = `/bin/pidof haproxy`; chomp $curPid;
