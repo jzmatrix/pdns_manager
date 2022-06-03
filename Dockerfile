@@ -26,8 +26,7 @@ ADD config/sslUpdate /opt/sslUpdate/sslUpdate
 ADD config/monitorConfig /opt/monitorConfig
 ################################################################################
 ################################################################################
-RUN chmod 0600 /root/.ssh/authorized_keys && \
-    chmod 755 /opt/startServices.sh && \
+RUN chmod 755 /opt/startServices.sh && \
     chmod 644 /root/.bash_profile && \
     chmod 755 /opt/sslUpdate/sslUpdate && \
     chmod 755 /opt/monitorConfig 
