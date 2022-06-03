@@ -20,7 +20,6 @@ RUN export DEBIAN_FRONTEND=noninteractive && \
     mkdir -p /STORAGE/PEM/ && \
     chmod 0755 /var/run/sshd
 ################################################################################
-ADD config/authorized_keys /root/.ssh/authorized_keys
 ADD config/startServices.sh /opt/startServices.sh
 ADD config/bash_profile /root/.bash_profile
 ADD config/sslUpdate /opt/sslUpdate/sslUpdate
