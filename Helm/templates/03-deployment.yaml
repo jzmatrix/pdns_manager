@@ -33,6 +33,8 @@ spec:
             mountPath: /config-haproxy
           - name: config-ssh
             mountPath: /config-ssh
+          - name: config-dnsmanager
+            mountPath: /config-dnsmanager
       nodeName: {{ .Values.deployServer }}
       volumes:
         - name: config-haproxy
@@ -41,6 +43,12 @@ spec:
             items:
             - key: haproxy.cfg
               path: haproxy.cfg
+        - name: config-dnsmanager 
+          configMap:
+            name: config-dnsmanager  
+            items:
+            - key: ConfigUser.php
+              path: ConfigUser.php
         - name: config-ssh
           configMap:
             name: config-ssh
