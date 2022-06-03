@@ -37,6 +37,7 @@ RUN export DEBIAN_FRONTEND=noninteractive && \
 ADD www /var/www/html
 ADD config/php7/php.ini /etc/php/7.4/apache2/php.ini
 ADD config/apache2/apache2.conf /etc/apache2/apache2.conf
+ADD config/apache2/ports.conf /etc/apache2/ports.conf
 ADD config/apache2/000-default.conf /etc/apache2/sites-available/000-default.conf
 ADD config/apache2/info.conf /etc/apache2/mods-available/info.conf
 ADD config/apache2/status.conf /etc/apache2/mods-available/status.conf
