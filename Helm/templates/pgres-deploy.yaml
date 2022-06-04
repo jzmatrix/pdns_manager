@@ -78,8 +78,10 @@ spec:
   ports:
     - port: 5432
       protocol: TCP
+      name: pgres-tcp
     - port: 5432
       protocol: UDP
+      name: pgres-udp
   selector:
     app: {{ .Values.serviceName }}-pgres-db
   clusterIP: {{ .Values.pgresSvcIP }}
