@@ -1,6 +1,14 @@
 namespace: default
 serviceName: ""
 
+adminerIP: "10.43.50.115"
+
+pgresDataPath: ""
+pgresSvcIP: "10.43.30.115"
+
+ldapDataPath: ""
+ldapSvcIP: "10.43.40.115"
+
 deployServer: cdns-m
 
 replicaCount: 1

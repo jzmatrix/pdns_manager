@@ -1,0 +1,37 @@
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  namespace: {{ .Values.namespace }}
+  name: {{ .Values.serviceName }}-adminer
+spec:
+  serviceName: "{{ .Values.serviceName }}"-adminer
+  replicas: 1
+  selector:
+    matchLabels:
+      app: {{ .Values.serviceName }}-adminer
+  template:
+    metadata:
+      labels:
+        app: {{ .Values.serviceName }}-pgadminerres
+    spec:
+      containers:
+      - image: "adminer:4.8.1"
+        imagePullPolicy: "always"
+        name: {{ .Values.serviceName }}-adminer
+        ports:
+        - containerPort: 8080
+          protocol: TCP
+      nodeName: {{ .Values.deployServer }}
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ .Values.serviceName }}-adminer
+  namespace: default
+spec:
+  ports:
+    - port: 8080
+      protocol: TCP
+  selector:
+    app: {{ .Values.serviceName }}-adminer
+  clusterIP: {{ .Values.adminerIP }}

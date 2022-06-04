@@ -1,0 +1,85 @@
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: {{ .Values.serviceName }}-pgres-pv
+spec:
+  capacity:
+    storage: 20Gi
+  accessModes:
+  - ReadWriteOnce
+  persistentVolumeReclaimPolicy: Retain
+  storageClassName: {{ .Values.serviceName }}-pgres-storage
+  hostPath:
+    path: {{ .Values.pgresDataPath }}
+  nodeAffinity:
+    required:
+      nodeSelectorTerms:
+      - matchExpressions:
+        - key: kubernetes.io/hostname
+          operator: In
+          values:
+          - {{ .server }}
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: {{ .Values.serviceName }}-pgres-pvc
+spec:
+  accessModes:
+  - ReadWriteOnce
+  storageClassName: {{ .Values.serviceName }}-pgres-storage
+  resources:
+    requests:
+      storage: 20Gi
+---
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  namespace: {{ .Values.namespace }}
+  name: {{ .Values.serviceName }}-pgres
+spec:
+  serviceName: "{{ .Values.serviceName }}"-pgres
+  replicas: 1
+  selector:
+    matchLabels:
+      app: {{ .Values.serviceName }}-pgres
+  template:
+    metadata:
+      labels:
+        app: {{ .Values.serviceName }}-pgres
+    spec:
+      containers:
+      - image: "postgres:14.3"
+        imagePullPolicy: "always"
+        name: {{ .Values.serviceName }}-pgres
+        ports:
+        - containerPort: 5432
+          protocol: TCP
+        - containerPort: 5432
+          protocol: UDP
+        envFrom:
+            - secretRef:
+                name: pgresconfig
+        volumeMounts:
+          - name: {{ .Values.serviceName }}-pgres
+            mountPath: /var/lib/postgresql/data 
+      nodeName: {{ .Values.deployServer }}
+      volumes:
+        - name: {{ .Values.serviceName }}-pgres
+          persistentVolumeClaim:
+            claimName: {{ .Values.serviceName }}-pgres-pvc
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ .Values.serviceName }}-pgres-db
+  namespace: default
+spec:
+  ports:
+    - port: 5432
+      protocol: TCP
+    - port: 5432
+      protocol: UDP
+  selector:
+    app: {{ .Values.serviceName }}-pgres-db
+  clusterIP: {{ .Values.pgresSvcIP }}
