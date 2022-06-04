@@ -16,7 +16,7 @@ spec:
     spec:
       containers:
       - image: "adminer:4.8.1"
-        imagePullPolicy: "always"
+        imagePullPolicy: {{ .Values.image.pullPolicy }}
         name: {{ .Values.serviceName }}-adminer
         ports:
         - containerPort: 8080

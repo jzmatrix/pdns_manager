@@ -50,7 +50,7 @@ spec:
     spec:
       containers:
       - image: "postgres:14.3"
-        imagePullPolicy: "always"
+        imagePullPolicy: {{ .Values.image.pullPolicy }}
         name: {{ .Values.serviceName }}-pgres
         ports:
         - containerPort: 5432
