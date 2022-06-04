@@ -38,7 +38,7 @@ metadata:
   namespace: {{ .Values.namespace }}
   name: {{ .Values.serviceName }}-pgres
 spec:
-  serviceName: "{{ .Values.serviceName }}"-pgres
+  serviceName: {{ .Values.serviceName }}-pgres
   replicas: 1
   selector:
     matchLabels:

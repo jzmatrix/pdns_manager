@@ -4,7 +4,7 @@ metadata:
   namespace: {{ .Values.namespace }}
   name: {{ .Values.serviceName }}-adminer
 spec:
-  serviceName: "{{ .Values.serviceName }}"-adminer
+  serviceName: {{ .Values.serviceName }}-adminer
   replicas: 1
   selector:
     matchLabels:
@@ -12,7 +12,7 @@ spec:
   template:
     metadata:
       labels:
-        app: {{ .Values.serviceName }}-pgadminerres
+        app: {{ .Values.serviceName }}-adminer
     spec:
       containers:
       - image: "adminer:4.8.1"
